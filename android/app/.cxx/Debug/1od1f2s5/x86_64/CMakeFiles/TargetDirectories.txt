@@ -1,0 +1,2 @@
+C:/Users/HP/Desktop/New folder/community/android/app/.cxx/Debug/1od1f2s5/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/HP/Desktop/New folder/community/android/app/.cxx/Debug/1od1f2s5/x86_64/CMakeFiles/rebuild_cache.dir
