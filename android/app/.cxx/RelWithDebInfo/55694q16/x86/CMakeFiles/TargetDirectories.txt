@@ -1,0 +1,2 @@
+C:/Users/HP/Desktop/New folder/community/android/app/.cxx/RelWithDebInfo/55694q16/x86/CMakeFiles/edit_cache.dir
+C:/Users/HP/Desktop/New folder/community/android/app/.cxx/RelWithDebInfo/55694q16/x86/CMakeFiles/rebuild_cache.dir
