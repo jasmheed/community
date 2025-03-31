@@ -40,10 +40,15 @@ class AuthRepository {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
-      final googleAuth = await googleUser?.authentication;
+      if (googleUser == null) {
+        return left(Failure("Google Sign-In was cancelled"));
+      }
+
+      final googleAuth = await googleUser.authentication;
+
       final credential = GoogleAuthProvider.credential(
-        accessToken: (googleAuth)?.accessToken,
-        idToken: (googleAuth)?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       UserCredential userCredential =
@@ -66,8 +71,8 @@ class AuthRepository {
         userModel = await getUserData(userCredential.user!.uid).first;
       }
       return right(userModel);
-    } on FirebaseException catch (e) {
-      throw e.message!;
+    } on FirebaseAuthException catch (e) {
+      return left(Failure(e.message ?? "Unknown Firebase error"));
     } catch (e) {
       return left(Failure(e.toString()));
     }
