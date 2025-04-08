@@ -58,7 +58,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 
   void save() {
-    ref.read(userProfileControllerrProvider.notifier).editProfile(
+    ref.read(userProfileControllerProvider.notifier).editProfile(
           profileFile: profileFile,
           bannerFile: bannerFile,
           context: context,
@@ -68,7 +68,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(userProfileControllerrProvider);
+    final isLoading = ref.watch(userProfileControllerProvider);
     final currentTheme = ref.watch(themeNotifierProvider);
     return ref.watch(getUserDataProvider(widget.uid)).when(
           data: (user) => Scaffold(
