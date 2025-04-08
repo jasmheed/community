@@ -182,7 +182,7 @@ class PostCard extends ConsumerWidget {
                                     ),
                                   ),
                                   Text(
-                                    '${post.upvotes.length - post.downvotes.length == 0 ? 'Vote' : post.upvotes.length - post.downvotes.length}',
+                                    '${post.upvotes.length + post.downvotes.length == 0 ? 'Vote' : (post.upvotes.length == post.downvotes.length ? '${post.upvotes.length}  -${post.downvotes.length}' : post.upvotes.length - post.downvotes.length)}',
                                     style: const TextStyle(fontSize: 17),
                                   ),
                                   IconButton(
