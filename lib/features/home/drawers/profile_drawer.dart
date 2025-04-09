@@ -11,8 +11,8 @@ class ProfileDrawer extends ConsumerWidget {
     super.key,
   });
 
-  void logOut(WidgetRef ref) {
-    ref.read(authControllerProvider.notifier).logOut();
+  Future<void> logOut(WidgetRef ref) async {
+    await ref.read(authControllerProvider.notifier).logOut();
   }
 
   void navigateToProfile(BuildContext context, String uid) {

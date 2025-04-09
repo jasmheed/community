@@ -11,12 +11,34 @@ class FeedScreen extends ConsumerWidget {
   const FeedScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-    if (user == null) {
-      return const Loader();
+    final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
+    if (!isGuest) {
+      return ref.watch(userCommunitiesProvider(user.uid)).when(
+            data: (communities) =>
+                ref.watch(userPostProvider(communities)).when(
+                      data: (data) {
+                        return ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final post = data[index];
+                            return PostCard(post: post);
+                          },
+                        );
+                      },
+                      error: (error, stackTrace) => ErrorText(
+                        error: error.toString(),
+                      ),
+                      loading: () => const Loader(),
+                    ),
+            error: (error, stackTrace) => ErrorText(
+              error: error.toString(),
+            ),
+            loading: () => const Loader(),
+          );
     }
     return ref.watch(userCommunitiesProvider(user.uid)).when(
-          data: (communities) => ref.watch(userPostProvider(communities)).when(
+          data: (communities) => ref.watch(guestPostProvider).when(
                 data: (data) {
                   return ListView.builder(
                     itemCount: data.length,

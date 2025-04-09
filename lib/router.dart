@@ -7,6 +7,7 @@ import 'package:community/features/community/screens/create_community_screen.dar
 import 'package:community/features/community/screens/edit_community_screen.dart';
 import 'package:community/features/community/screens/mod_tools_screen.dart';
 import 'package:community/features/home/screens/home_screen.dart';
+import 'package:community/features/post/screens/add_post_screen.dart';
 import 'package:community/features/post/screens/add_post_type_screen.dart';
 import 'package:community/features/post/screens/comments_screen.dart';
 import 'package:community/features/user_profile/screens/edit_profile_screen.dart';
@@ -56,4 +57,7 @@ final loggedInRoute = RouteMap(routes: {
           child: CommentsScreen(
         postId: routeData.pathParameters['postId']!,
       )),
+  '/add-post': (routeData) => const MaterialPage(
+        child: AddPostScreen(),
+      ),
 });

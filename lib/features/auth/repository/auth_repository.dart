@@ -1,3 +1,5 @@
+import 'dart:ui' as html;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:community/core/constants/firebase_constants.dart';
 import 'package:community/core/constants/constants.dart';
@@ -6,6 +8,7 @@ import 'package:community/core/providers/firebase_providers.dart';
 import 'package:community/core/type_defs.dart';
 import 'package:community/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,23 +39,37 @@ class AuthRepository {
 
   Stream<User?> get authStateChange => _auth.authStateChanges();
 
-  FutureEither<UserModel> signInWithGoogle() async {
+  FutureEither<UserModel> signInWithGoogle(bool isFromLogin) async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      UserCredential userCredential;
+      if (kIsWeb) {
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider
+            .addScope('https://www.googleapis.com/auth/contacts.readonly');
+        googleProvider.setCustomParameters({'prompt': 'select_account'});
 
-      if (googleUser == null) {
-        return left(Failure("Google Sign-In was cancelled"));
+        userCredential = await _auth.signInWithPopup(googleProvider);
+      } else {
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+        if (googleUser == null) {
+          return left(Failure("Google Sign-In was cancelled"));
+        }
+
+        final googleAuth = await googleUser.authentication;
+
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        if (isFromLogin) {
+          userCredential = await _auth.signInWithCredential(credential);
+        } else {
+          userCredential =
+              await _auth.currentUser!.linkWithCredential(credential);
+        }
       }
-
-      final googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
 
       UserModel userModel;
 
@@ -125,7 +142,19 @@ class AuthRepository {
   }
 
   void logOut() async {
-    await _googleSignIn.signOut();
+    if (!kIsWeb) {
+      await _googleSignIn.signOut(); // Mobile
+    }
     await _auth.signOut();
+
+    // Force logout from Google session on web
+    if (kIsWeb) {
+      // Open Google's logout endpoint in a hidden iframe or new tab
+      html.window.open("https://accounts.google.com/Logout", "_self");
+    }
   }
+}
+
+extension on html.SingletonFlutterWindow {
+  void open(String s, String t) {}
 }

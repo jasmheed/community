@@ -2,6 +2,7 @@ import 'package:community/core/common/loader.dart';
 import 'package:community/core/common/sign_in_button.dart';
 import 'package:community/core/constants/constants.dart';
 import 'package:community/features/auth/controller/auth_controller.dart';
+import 'package:community/responsive/responsive.dart';
 import 'package:community/theme/pallete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,7 +65,7 @@ class LoginScreen extends ConsumerWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                const SignInButton(),
+                const Responsive(child: SignInButton()),
               ],
             ),
     );

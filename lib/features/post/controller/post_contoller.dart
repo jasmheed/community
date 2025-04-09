@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:community/core/enums/enums.dart';
 import 'package:community/core/providers/storage_repository_provider.dart';
 import 'package:community/core/utils.dart';
@@ -27,6 +28,11 @@ final userPostProvider =
     StreamProvider.family((ref, List<Community> communities) {
   final postContoller = ref.watch(postContollerProvider.notifier);
   return postContoller.fetchUserPosts(communities);
+});
+
+final guestPostProvider = StreamProvider((ref) {
+  final postContoller = ref.watch(postContollerProvider.notifier);
+  return postContoller.fetchGuestPosts(ref);
 });
 
 final getPostByIdProvider = StreamProvider.family((ref, String postId) {
@@ -132,6 +138,7 @@ class PostContoller extends StateNotifier<bool> {
     required String title,
     required Community selectedCommunity,
     required File? file,
+    required Uint8List? webFile,
   }) async {
     state = true;
     String postId = const Uuid().v1();
@@ -140,6 +147,7 @@ class PostContoller extends StateNotifier<bool> {
       path: 'posts/${selectedCommunity.name}',
       id: postId,
       file: file,
+      webFile: webFile,
     );
 
     imageRes.fold((l) => showSnackBar(context, l.message), (r) async {
@@ -176,6 +184,10 @@ class PostContoller extends StateNotifier<bool> {
       return _postRepository.fetchUserPosts(communities);
     }
     return Stream.value([]);
+  }
+
+  Stream<List<Post>> fetchGuestPosts(s) {
+    return _postRepository.fetchGuestPosts();
   }
 
   void deletePost(Post post, BuildContext context) async {

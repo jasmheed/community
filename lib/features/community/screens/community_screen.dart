@@ -33,12 +33,19 @@ class CommunityScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider)!;
+    final isGuest = !user.isAuthenticated;
     return Scaffold(
       body: ref.watch(getCommunityByNameProvider(name)).when(
             data: (community) => NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
                   SliverAppBar(
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Routemaster.of(context).pop();
+                      },
+                    ),
                     expandedHeight: 150,
                     floating: true,
                     snap: true,
@@ -76,44 +83,45 @@ class CommunityScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              community.mods.contains(user.uid)
-                                  ? OutlinedButton(
-                                      onPressed: () {
-                                        navigateToModTools(context);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                              if (!isGuest)
+                                community.mods.contains(user.uid)
+                                    ? OutlinedButton(
+                                        onPressed: () {
+                                          navigateToModTools(context);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 25),
-                                      ),
-                                      child: Text(
-                                        'Mod Tools',
-                                        style:
-                                            TextStyle(color: Pallete.blueColor),
-                                      ),
-                                    )
-                                  : OutlinedButton(
-                                      onPressed: () => joinCommunity(
-                                          ref, community, context),
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                                        child: Text(
+                                          'Mod Tools',
+                                          style: TextStyle(
+                                              color: Pallete.blueColor),
                                         ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 25),
+                                      )
+                                    : OutlinedButton(
+                                        onPressed: () => joinCommunity(
+                                            ref, community, context),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 25),
+                                        ),
+                                        child: Text(
+                                          community.members.contains(user.uid)
+                                              ? 'Joined'
+                                              : 'Join',
+                                          style: TextStyle(
+                                              color: Pallete.blueColor),
+                                        ),
                                       ),
-                                      child: Text(
-                                        community.members.contains(user.uid)
-                                            ? 'Joined'
-                                            : 'Join',
-                                        style:
-                                            TextStyle(color: Pallete.blueColor),
-                                      ),
-                                    ),
                             ],
                           ),
                           Padding(

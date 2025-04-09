@@ -36,10 +36,10 @@ class AuthController extends StateNotifier<bool> {
         super(false); //loading
 
   Stream<User?> get authStateChange => _authRepository.authStateChange;
-  void signInWithGoogle(BuildContext context) async {
+  void signInWithGoogle(BuildContext context, bool isFromLogin) async {
     state = true;
 
-    final userResult = await _authRepository.signInWithGoogle();
+    final userResult = await _authRepository.signInWithGoogle(isFromLogin);
     state = false;
 
     userResult.fold(
@@ -66,7 +66,7 @@ class AuthController extends StateNotifier<bool> {
     return _authRepository.getUserData(uid);
   }
 
-  void logOut() async {
-    _authRepository.logOut();
+  Future<void> logOut() async {
+    return _authRepository.logOut();
   }
 }

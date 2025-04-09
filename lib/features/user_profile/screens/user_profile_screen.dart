@@ -28,6 +28,12 @@ class UserProfileScreen extends ConsumerWidget {
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return [
                   SliverAppBar(
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Routemaster.of(context).pop();
+                      },
+                    ),
                     expandedHeight: 250,
                     floating: true,
                     snap: true,
